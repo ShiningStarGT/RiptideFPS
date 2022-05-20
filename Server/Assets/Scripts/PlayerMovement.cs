@@ -81,7 +81,7 @@ public class PlayerMovement : MonoBehaviour
         moveDirection.y = yVelocity;
         controller.Move(moveDirection);
 
-        SendMovement();
+        SendMovement(jump, controller.isGrounded);
     }
 
     private Vector3 FlattenVector3(Vector3 vector)
@@ -96,12 +96,14 @@ public class PlayerMovement : MonoBehaviour
         camProxy.forward = forward;
     }
 
-    private void SendMovement()
+    private void SendMovement(bool isJump, bool isGrounded)
     {
         Message message = Message.Create(MessageSendMode.unreliable, ServerToClientId.playerMovement);
         message.AddUShort(player.Id);
         message.AddVector3(transform.position);
         message.AddVector3(camProxy.forward);
+        message.AddBool(isJump);
+        message.AddBool(isGrounded);
         NetworkManager.Singleton.Server.SendToAll(message);
     }
 }

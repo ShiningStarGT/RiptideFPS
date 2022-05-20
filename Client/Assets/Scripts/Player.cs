@@ -19,14 +19,14 @@ public class Player : MonoBehaviour
         list.Remove(Id);
     }
 
-    private void Move(Vector3 newPosition, Vector3 forward)
+    private void Move(Vector3 newPosition, Vector3 forward, bool isJump, bool isGrounded)
     {
         transform.position = newPosition;
         
         if (!IsLocal)
         {
             camTransform.forward = forward;
-            animationManager.AnimateBasedOnSpeed();
+            animationManager.AnimateModel(isJump, isGrounded);
         }
     }
 
@@ -62,7 +62,7 @@ public class Player : MonoBehaviour
     private static void PlayerMovement(Message message)
     {
         if (list.TryGetValue(message.GetUShort(), out Player player))
-            player.Move(message.GetVector3(), message.GetVector3());
+            player.Move(message.GetVector3(), message.GetVector3(), message.GetBool(), message.GetBool());
     }
     #endregion
 }
